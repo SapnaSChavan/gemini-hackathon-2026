@@ -15,8 +15,9 @@ class GeminiModels:
     # For vision/OCR tasks
     VISION_MODEL = "gemini-3-flash-preview"
     
-    # For audio transcription (use Gemini 3 if available, fallback to 2.5)
+    # For audio transcription (use Gemini 3 if available, fallback to 2.x only when required)
     AUDIO_MODEL = "gemini-3-flash-preview"
+    AUDIO_FALLBACK_MODEL = "gemini-2.5-flash-native-audio-preview-12-2025"
     
     # For embeddings (latest)
     EMBEDDING_MODEL = "text-embedding-004"
@@ -37,6 +38,11 @@ class GeminiModels:
             "embedding": cls.EMBEDDING_MODEL
         }
         return task_map.get(task_type, cls.PRIMARY_MODEL)
+
+    @classmethod
+    def get_audio_model(cls, allow_fallback: bool = False) -> str:
+        """Return audio model, optionally using the Gemini 2.x fallback."""
+        return cls.AUDIO_FALLBACK_MODEL if allow_fallback else cls.AUDIO_MODEL
     
     @classmethod
     def get_display_name(cls) -> str:

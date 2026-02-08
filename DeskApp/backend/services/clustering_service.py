@@ -3,6 +3,7 @@
 from typing import List, Dict
 import google.generativeai as genai
 from core.config import settings
+from core.models import GeminiModels
 
 class ClusteringService:
     """
@@ -11,7 +12,7 @@ class ClusteringService:
     
     def __init__(self):
         genai.configure(api_key=settings.GOOGLE_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        self.model = genai.GenerativeModel(GeminiModels.get_model())
         print("[CLUSTERING_SERVICE] Initialized")
     
     def generate_clusters(

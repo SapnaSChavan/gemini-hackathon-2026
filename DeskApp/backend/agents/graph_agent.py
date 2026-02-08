@@ -7,6 +7,7 @@ LifeOS - Agent 6: Knowledge Graph Agent
 Role: Discovers relationships between memories
 """
 from agents.base import AgentBase
+from core.models import GeminiModels
 from typing import List, Dict, Optional
 from datetime import datetime
 
@@ -29,7 +30,7 @@ class GraphAgent(AgentBase):
             "Only suggest connections with confidence > 0.6"
         )
         super().__init__(
-            model_id="gemini-2.5-flash",
+            model_id=GeminiModels.get_model(),
             system_instruction=system_instruction
         )
 

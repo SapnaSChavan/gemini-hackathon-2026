@@ -3,6 +3,7 @@ LifeOS - Agent 7: Proactive Agent
 Role: Context-aware assistance without being asked
 """
 from agents.base import AgentBase
+from core.models import GeminiModels
 
 class ProactiveAgent(AgentBase):
     def __init__(self):
@@ -15,7 +16,7 @@ class ProactiveAgent(AgentBase):
             "Be brief and actionable."
         )
         super().__init__(
-            model_id="gemini-2.5-flash",
+            model_id=GeminiModels.get_model(),
             system_instruction=system_instruction
         )
 

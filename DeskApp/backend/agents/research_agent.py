@@ -3,6 +3,7 @@ LifeOS - Agent 4: Intelligent Research Agent
 Role: Smart research activation for technical problems, learning, and decisions
 """
 from agents.base import AgentBase
+from core.models import GeminiModels
 from google.genai import types
 from services.firestore_service import FirestoreService
 from typing import List, Dict, Any
@@ -35,7 +36,7 @@ ALWAYS:
         self.search_tool = types.Tool(google_search=types.GoogleSearch())
         
         super().__init__(
-            model_id="gemini-2.5-flash",
+            model_id=GeminiModels.get_model(),
             system_instruction=system_instruction,
             tools=[self.search_tool]
         )

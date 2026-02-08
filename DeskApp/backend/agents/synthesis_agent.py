@@ -6,6 +6,7 @@ LifeOS - Agent 5: Synthesis Agent
 Role: Combines multiple captures into comprehensive briefs
 """
 from agents.base import AgentBase
+from core.models import GeminiModels
 from typing import List, Dict
 
 class SynthesisAgent(AgentBase):
@@ -21,7 +22,7 @@ class SynthesisAgent(AgentBase):
             "5. Suggest next steps"
         )
         super().__init__(
-            model_id="gemini-2.5-flash",
+            model_id=GeminiModels.get_model(),
             system_instruction=system_instruction
         )
 

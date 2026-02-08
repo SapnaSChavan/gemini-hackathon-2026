@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List, Dict
 from services.firestore_service import FirestoreService
 from core.config import settings
+from core.models import GeminiModels
 import google.generativeai as genai
 
 class NotificationService:
@@ -9,7 +10,7 @@ class NotificationService:
     def __init__(self):
         self.db = FirestoreService()
         genai.configure(api_key=settings.GOOGLE_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        self.model = genai.GenerativeModel(GeminiModels.get_model())
         print("[NOTIFICATION_SERVICE] Initialized")
     
     def get_proactive_notifications(self, user_id: str) -> List[Dict]:

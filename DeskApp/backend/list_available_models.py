@@ -37,7 +37,7 @@ try:
         display_name = model.display_name
         
         # Parse the actual model ID
-        # Format: "models/gemini-2.0-flash-exp"
+        # Format: "models/gemini-3-flash-preview"
         if "flash" in model_name.lower():
             flash_models.append((model_name, display_name))
         elif "pro" in model_name.lower():

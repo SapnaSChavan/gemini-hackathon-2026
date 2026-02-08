@@ -3,6 +3,7 @@ LifeOS - Agent 9: Email Intelligence Assistant
 Role: Analyzes yesterday's emails and drafts replies for forgotten messages
 """
 from agents.base import AgentBase
+from core.models import GeminiModels
 from typing import List, Dict, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
@@ -61,7 +62,7 @@ class EmailAssistantAgent(AgentBase):
             "Saurabh\n"
         )
         super().__init__(
-            model_id="gemini-2.5-flash",
+            model_id=GeminiModels.get_model(),
             system_instruction=system_instruction
         )
     
@@ -94,7 +95,7 @@ class EmailAssistantAgent(AgentBase):
             client = genai.Client(api_key=settings.GOOGLE_API_KEY)
             
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model=GeminiModels.get_model(),
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=self.system_instruction,
@@ -173,7 +174,7 @@ class EmailAssistantAgent(AgentBase):
             client = genai.Client(api_key=settings.GOOGLE_API_KEY)
             
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model=GeminiModels.get_model(),
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     system_instruction=self.system_instruction,

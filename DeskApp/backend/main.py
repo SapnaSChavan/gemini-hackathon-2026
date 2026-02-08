@@ -34,6 +34,7 @@ from models.capture import Capture, CaptureMetadata
 from models.memory import Memory
 from core.event_bus import bus
 from core.config import settings  # ADDED: Was missing, needed for /api/inbox
+from core.models import GeminiModels
 from agents.proactive_agent import ProactiveAgent
 from agents.synthesis_agent import SynthesisAgent
 from agents.graph_agent import GraphAgent
@@ -350,7 +351,7 @@ async def ws_transcribe(websocket: WebSocket, token: str = Query(default="")):
     from google import genai
     
     client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-    MODEL = "gemini-2.5-flash-native-audio-preview-12-2025"
+    model_id = GeminiModels.get_audio_model()
     CONFIG = {
         "response_modalities": ["TEXT"],
         "system_instruction": (
@@ -360,8 +361,8 @@ async def ws_transcribe(websocket: WebSocket, token: str = Query(default="")):
         ),
     }
 
-    try:
-        async with client.aio.live.connect(model=MODEL, config=CONFIG) as live_session:
+    async def run_session(session_model_id: str):
+        async with client.aio.live.connect(model=session_model_id, config=CONFIG) as live_session:
 
             async def forward_audio():
                 while True:
@@ -388,11 +389,19 @@ async def ws_transcribe(websocket: WebSocket, token: str = Query(default="")):
                 tg.create_task(forward_audio())
                 tg.create_task(forward_text())
 
+    try:
+        await run_session(model_id)
     except WebSocketDisconnect:
         return
     except Exception as e:
-        await websocket.send_json({"type": "error", "error": str(e)})
-        await websocket.close()
+        error_str = str(e).lower()
+        fallback_model = GeminiModels.get_audio_model(allow_fallback=True)
+        if fallback_model != model_id and ("not found" in error_str or "404" in error_str or "model" in error_str):
+            print("[WARN] Gemini 3 audio model unavailable; falling back to Gemini 2.x audio preview.")
+            await run_session(fallback_model)
+        else:
+            await websocket.send_json({"type": "error", "error": str(e)})
+            await websocket.close()
 
 
 # ============================================
